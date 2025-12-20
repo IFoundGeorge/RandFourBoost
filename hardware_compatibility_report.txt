@@ -1,0 +1,34 @@
+{
+    "System Information": {
+        "System": "Windows 10",
+        "Machine": "AMD64",
+        "Processor": "Intel64 Family 6 Model 142 Stepping 12, GenuineIntel",
+        "Python Version": "3.10.0",
+        "CPU Cores": "8",
+        "Total RAM": "15.65 GB"
+    },
+    "CPU Performance": {
+        "CPU Test Time (lower is better)": 1.2845687866210938,
+        "CPU Score": 0.777865805709499
+    },
+    "Memory Usage": {
+        "Total RAM": "15.65 GB",
+        "Available RAM": "3.35 GB",
+        "Used RAM": "12.30 GB",
+        "RAM Usage %": "78.6%"
+    },
+    "Disk Space": {
+        "Total Disk Space": "476.09 GB",
+        "Used Disk Space": "440.47 GB",
+        "Free Disk Space": "35.62 GB",
+        "Disk Usage %": "92.5%"
+    },
+    "GPU Information": {
+        "GPU Available": "No CUDA-capable GPU found"
+    },
+    "Audio Devices": {
+        "Audio Devices": "Found 115 audio devices",
+        "Default Input Device": "Voicemeeter Out B1 (VB-Audio Vo",
+        "Default Output Device": "Voicemeeter Input (VB-Audio Voi"
+    }
+}

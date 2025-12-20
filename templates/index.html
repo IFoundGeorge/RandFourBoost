@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gentective - Music Genre Classification</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .navbar {
+            background-color: var(--secondary-color);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.8rem;
+            color: white !important;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            color: white;
+            padding: 5rem 0;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+        
+        .upload-container {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3rem;
+        }
+        
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+        
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            background-color: #f8f9fa;
+        }
+        
+        .upload-area i {
+            font-size: 3rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 0.6rem 2rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .result-container {
+            display: none;
+            margin-top: 2rem;
+        }
+        
+        .result-card {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+        
+        .genre-display {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin: 1rem 0;
+        }
+        
+        .confidence {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+        }
+        
+        .probability-bar {
+            height: 30px;
+            background-color: #ecf0f1;
+            border-radius: 15px;
+            margin: 0.5rem 0;
+            overflow: hidden;
+        }
+        
+        .probability-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3498db, #2ecc71);
+            border-radius: 15px;
+            width: 0;
+            transition: width 1s ease-in-out;
+        }
+        
+        .probability-label {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .probability-item {
+            margin-bottom: 1.5rem;
+        }
+        
+        .visualization {
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        .visualization img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        footer {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        
+        .spinner {
+            width: 3rem;
+            height: 3rem;
+            margin: 0 auto 1rem;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error-message {
+            color: #e74c3c;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .genre-display {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">GENTECTIVE</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#how-it-works">How It Works</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1>Music Genre Classification</h1>
+            <p>Upload an audio file and let our AI analyze its genre with advanced machine learning algorithms</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="upload-container">
+                    <h2 class="text-center mb-4">Upload Your Audio File</h2>
+                    <p class="text-center text-muted mb-4">Supported formats: WAV, MP3, OGG, FLAC (max 16MB)</p>
+                    
+                    <div id="drop-area" class="upload-area">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h4>Drag & Drop your audio file here</h4>
+                        <p class="text-muted">or click to browse files</p>
+                        <input type="file" id="fileInput" accept=".wav,.mp3,.ogg,.flac" style="display: none;">
+                    </div>
+                    
+                    <div class="text-center">
+                        <button id="predictBtn" class="btn btn-primary btn-lg" disabled>
+                            <i class="fas fa-music me-2"></i> Predict Genre
+                        </button>
+                    </div>
+                    
+                    <div id="fileInfo" class="mt-3 text-center"></div>
+                    <div id="errorMessage" class="error-message"></div>
+                    
+                    <div id="loading" class="loading">
+                        <div class="spinner"></div>
+                        <p>Analyzing audio features. This may take a moment...</p>
+                    </div>
+                    
+                    <div id="resultContainer" class="result-container">
+                        <div class="result-card">
+                            <h3 class="text-center mb-4">Prediction Result</h3>
+                            <div class="text-center">
+                                <p class="mb-2">The predicted genre is:</p>
+                                <div id="genreDisplay" class="genre-display">-</div>
+                                <div id="confidence" class="confidence">with <span id="confidenceValue">0</span>% confidence</div>
+                            </div>
+                            
+                            <div class="mt-5">
+                                <h4 class="mb-4">Genre Probabilities</h4>
+                                <div id="probabilityList">
+                                    <!-- Probability bars will be inserted here -->
+                                </div>
+                            </div>
+                            
+                            <div class="visualization mt-5">
+                                <h4 class="mb-4">Visualization</h4>
+                                <div id="visualizationContainer">
+                                    <img id="probabilityChart" src="" alt="Genre Probability Chart" style="display: none;">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <button id="resetBtn" class="btn btn-outline-secondary">
+                                <i class="fas fa-redo me-2"></i> Analyze Another File
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-5 bg-light">
+        <div class="container">
+            <h2 class="text-center mb-5">How It Works</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="text-center p-4">
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-upload fa-2x text-primary"></i>
+                        </div>
+                        <h4>1. Upload Audio</h4>
+                        <p class="text-muted">Upload your audio file in WAV, MP3, OGG, or FLAC format.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="text-center p-4">
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-brain fa-2x text-primary"></i>
+                        </div>
+                        <h4>2. AI Analysis</h4>
+                        <p class="text-muted">Our advanced algorithm analyzes the audio features to determine the genre.</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="text-center p-4">
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                            <i class="fas fa-chart-bar fa-2x text-primary"></i>
+                        </div>
+                        <h4>3. Get Results</h4>
+                        <p class="text-muted">View the predicted genre along with detailed probability analysis.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- About Section -->
+    <section id="about" class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h2 class="mb-4">About Gentective</h2>
+                    <p class="lead">Gentective is a music genre classification system powered by advanced machine learning algorithms.</p>
+                    <p>Our system analyzes various audio features including spectral features, rhythm patterns, and timbral textures to accurately predict the genre of your music.</p>
+                    <p>Built with Python, Flask, and state-of-the-art machine learning models, Gentective provides fast and accurate genre classification for music enthusiasts and professionals alike.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 Gentective. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const dropArea = document.getElementById('drop-area');
+            const fileInput = document.getElementById('fileInput');
+            const predictBtn = document.getElementById('predictBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const fileInfo = document.getElementById('fileInfo');
+            const resultContainer = document.getElementById('resultContainer');
+            const loading = document.getElementById('loading');
+            const errorMessage = document.getElementById('errorMessage');
+            const genreDisplay = document.getElementById('genreDisplay');
+            const confidenceValue = document.getElementById('confidenceValue');
+            const probabilityList = document.getElementById('probabilityList');
+            const probabilityChart = document.getElementById('probabilityChart');
+            
+            let selectedFile = null;
+            
+            // Prevent default drag behaviors
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+                document.body.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            // Highlight drop area when item is dragged over it
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            // Handle dropped files
+            dropArea.addEventListener('drop', handleDrop, false);
+            
+            // Handle click on drop area
+            dropArea.addEventListener('click', () => {
+                fileInput.click();
+            });
+            
+            // Handle file selection via input
+            fileInput.addEventListener('change', function() {
+                if (this.files.length) {
+                    handleFiles(this.files);
+                }
+            });
+            
+            // Handle predict button click
+            predictBtn.addEventListener('click', predictGenre);
+            
+            // Handle reset button click
+            resetBtn.addEventListener('click', resetForm);
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            function highlight() {
+                dropArea.style.borderColor = '#3498db';
+                dropArea.style.backgroundColor = 'rgba(52, 152, 219, 0.1)';
+            }
+            
+            function unhighlight() {
+                dropArea.style.borderColor = '#ddd';
+                dropArea.style.backgroundColor = '';
+            }
+            
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                handleFiles(files);
+            }
+            
+            function handleFiles(files) {
+                const file = files[0];
+                
+                // Check file type
+                const validTypes = ['audio/wav', 'audio/mp3', 'audio/ogg', 'audio/flac', 'audio/mpeg'];
+                if (!validTypes.includes(file.type) && !file.name.match(/\.(wav|mp3|ogg|flac)$/i)) {
+                    showError('Invalid file type. Please upload a WAV, MP3, OGG, or FLAC file.');
+                    return;
+                }
+                
+                // Check file size (max 16MB)
+                const maxSize = 16 * 1024 * 1024; // 16MB
+                if (file.size > maxSize) {
+                    showError('File is too large. Maximum size is 16MB.');
+                    return;
+                }
+                
+                selectedFile = file;
+                updateFileInfo(file);
+                predictBtn.disabled = false;
+                hideError();
+            }
+            
+            function updateFileInfo(file) {
+                const fileSize = (file.size / (1024 * 1024)).toFixed(2);
+                fileInfo.innerHTML = `
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Selected: <strong>${file.name}</strong> (${fileSize} MB)
+                    </div>
+                `;
+            }
+            
+            function showError(message) {
+                errorMessage.textContent = message;
+                errorMessage.style.display = 'block';
+                
+                // Hide error after 5 seconds
+                setTimeout(hideError, 5000);
+            }
+            
+            function hideError() {
+                errorMessage.style.display = 'none';
+            }
+            
+            async function predictGenre() {
+                if (!selectedFile) {
+                    showError('Please select a file first.');
+                    return;
+                }
+                
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+                
+                // Show loading state
+                loading.style.display = 'block';
+                predictBtn.disabled = true;
+                dropArea.style.pointerEvents = 'none';
+                
+                try {
+                    const response = await fetch('/predict', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        displayResults(result);
+                    } else {
+                        throw new Error(result.error || 'An error occurred while processing your request.');
+                    }
+                } catch (error) {
+                    showError(error.message || 'Failed to process the audio file. Please try again.');
+                    console.error('Prediction error:', error);
+                } finally {
+                    loading.style.display = 'none';
+                }
+            }
+            
+            function displayResults(result) {
+                // Update genre and confidence
+                genreDisplay.textContent = result.prediction.genre.toUpperCase();
+                const confidence = (result.prediction.probabilities[result.prediction.genre] * 100).toFixed(2);
+                confidenceValue.textContent = confidence;
+                
+                // Update probability list
+                probabilityList.innerHTML = '';
+                
+                // Sort genres by probability (highest first)
+                const sortedGenres = Object.entries(result.prediction.probabilities)
+                    .sort((a, b) => b[1] - a[1]);
+                
+                sortedGenres.forEach(([genre, prob]) => {
+                    const percentage = (prob * 100).toFixed(1);
+                    const isTopGenre = genre === result.prediction.genre;
+                    
+                    const item = document.createElement('div');
+                    item.className = 'probability-item' + (isTopGenre ? ' fw-bold' : '');
+                    item.innerHTML = `
+                        <div class="d-flex justify-content-between mb-1">
+                            <span>${genre.charAt(0).toUpperCase() + genre.slice(1)}</span>
+                            <span>${percentage}%</span>
+                        </div>
+                        <div class="progress" style="height: 10px;">
+                            <div class="progress-bar" role="progressbar" 
+                                 style="width: ${percentage}%; background-color: ${isTopGenre ? '#3498db' : '#95a5a6'}" 
+                                 aria-valuenow="${percentage}" 
+                                 aria-valuemin="0" 
+                                 aria-valuemax="100">
+                            </div>
+                        </div>
+                    `;
+                    probabilityList.appendChild(item);
+                });
+                
+                // Update visualization
+                if (result.plot_path) {
+                    probabilityChart.src = result.plot_path;
+                    probabilityChart.style.display = 'block';
+                }
+                
+                // Show results
+                resultContainer.style.display = 'block';
+                
+                // Scroll to results
+                resultContainer.scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            function resetForm() {
+                // Reset file input
+                fileInput.value = '';
+                selectedFile = null;
+                fileInfo.innerHTML = '';
+                predictBtn.disabled = true;
+                
+                // Hide results
+                resultContainer.style.display = 'none';
+                
+                // Reset form
+                dropArea.style.pointerEvents = 'auto';
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        });
+    </script>
+</body>
+</html>
