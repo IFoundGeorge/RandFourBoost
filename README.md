@@ -86,6 +86,7 @@ The performance of RandFourBoost was evaluated using:
 
 ## 📈 Results and Discussion
 Experimental results show that RandFourBoost outperforms traditional ensemble models in terms of accuracy and stability, demonstrating its effectiveness in complex classification tasks.
+<img width="1184" height="164" alt="Screenshot 2025-10-02 105321" src="https://github.com/user-attachments/assets/60cb9de8-df87-4051-b118-9462e1a5a1b9" />
 
 ---
 
