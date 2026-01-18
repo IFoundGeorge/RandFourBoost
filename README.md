@@ -20,38 +20,56 @@ This study proposes RandFourBoost, a hybrid ensemble learning approach that comb
 ## 🧠 Methodology
 
 ### 1. Data Collection
-The dataset used in this study was collected from publicly available sources and preprocessed to ensure data quality and consistency.
-<img width="606" height="775" alt="web facebook" src="https://github.com/user-attachments/assets/f1141d78-3d07-4bce-9ee1-42b13910e54e" />
+This study utilized the **GTZAN Music Genre Classification Dataset**, obtained from Kaggle. The dataset consists of **1,000 audio tracks**, each with a duration of **30 seconds**, evenly distributed across **10 music genres**: Blues, Classical, Country, Disco, Hip-Hop, Jazz, Metal, Pop, Reggae, and Rock.
+
+The GTZAN dataset is widely used as a benchmark in music genre classification research and was selected to ensure consistency, reproducibility, and comparability with existing studies.
+
+Dataset source:  
+https://www.kaggle.com/datasets/andradaolteanu/gtzan-dataset-music-genre-classification
+
+---
 
 ### 2. Data Preprocessing
-- Handling missing values
-- Feature normalization
-- Noise reduction
+- Audio signal loading and resampling
+- Removal of corrupted or duplicate audio files
+- Feature normalization and scaling
 - Dataset partitioning into training and testing sets
 
+---
+
 ### 3. Feature Transformation (Fourier Analysis)
-A Fourier Transform was applied to selected features to extract frequency-domain representations, improving pattern recognition and signal-related characteristics within the dataset.
+A Fourier Transform was applied to the audio signals to extract frequency-domain features, capturing spectral characteristics that enhance the representation of musical patterns for genre classification.
+
+---
 
 ### 4. Random Forest Modeling
 Random Forest was employed to:
-- Generate diverse decision trees
-- Reduce overfitting
-- Improve generalization through ensemble averaging
+- Generate diverse decision trees from extracted features
+- Reduce overfitting through ensemble averaging
+- Improve generalization across unseen audio samples
+
+---
 
 ### 5. Boosting Integration
 Boosting techniques were applied to:
-- Focus on misclassified samples
-- Iteratively improve weak learners
-- Increase overall model accuracy
+- Emphasize misclassified audio samples
+- Iteratively strengthen weak learners
+- Improve overall classification accuracy and robustness
+
+---
 
 ### 6. RandFourBoost Framework
-The integration of Fourier-based features with Random Forest outputs was boosted iteratively to form the RandFourBoost model.
+The RandFourBoost framework integrates Fourier-based audio features with Random Forest outputs, enhanced through boosting iterations to form a robust hybrid ensemble model for music genre classification.
 
 ---
 
 ## 🏗️ System Architecture
 <p align="center">
-  <img src="images/architecture.png" width="650">
+  <img src="https://github.com/user-attachments/assets/f1141d78-3d07-4bce-9ee1-42b13910e54e" width="650">
+</p>
+
+<p align="center">
+  <em>Figure 1. Overall System Architecture of the RandFourBoost Model</em>
 </p>
 
 ---
@@ -88,3 +106,13 @@ RandFourBoost/
 ├── src/
 ├── README.md
 └── LICENSE
+
+# Copyright Notice
+
+© 2025 Cyrus Manipon Cavero, Joey Castro Gannaban, Ricardo Querubin Camungao.  
+**Title:** RandFourBoost: An Enhanced Classification Model for Music Production  
+**AI Generated:** Yes, ChatGPT  
+**All rights reserved.**  
+
+This work is registered with the Intellectual Property Office of the Philippines (Certificate No. 2025-06674-A).  
+Validate at [www.ipophil.gov.ph](https://www.ipophil.gov.ph)
