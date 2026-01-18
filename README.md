@@ -21,6 +21,7 @@ This study proposes RandFourBoost, a hybrid ensemble learning approach that comb
 
 ### 1. Data Collection
 The dataset used in this study was collected from publicly available sources and preprocessed to ensure data quality and consistency.
+<img width="606" height="775" alt="web facebook" src="https://github.com/user-attachments/assets/f1141d78-3d07-4bce-9ee1-42b13910e54e" />
 
 ### 2. Data Preprocessing
 - Handling missing values
